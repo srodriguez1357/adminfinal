@@ -1,0 +1,177 @@
+Current configuration : 2665 bytes
+!
+! Last configuration change at 05:25:01 UTC Sat May 15 2021
+upgrade fpd auto
+version 15.2
+service timestamps debug datetime msec
+service timestamps log datetime msec
+no service password-encryption
+!
+hostname rtr1-ar
+!
+boot-start-marker
+boot-end-marker
+!
+!
+enable secret 5 $1$UOsw$Hwpj1qkaggsvcgQXyE6Yq0
+!
+aaa new-model
+!
+!
+aaa group server tacacs+ TACACS_ARLAB
+ server name ACS-TACACS
+!
+aaa authentication login default group TACACS_ARLAB local
+aaa authentication login CONSOLE local line
+aaa authentication enable default group TACACS_ARLAB enable
+aaa authorization exec default group TACACS_ARLAB local
+aaa authorization commands 1 default group TACACS_ARLAB local
+aaa authorization commands 15 default group TACACS_ARLAB local
+aaa accounting commands 1 default start-stop group TACACS_ARLAB
+aaa accounting commands 15 default start-stop group TACACS_ARLAB
+!
+!
+!
+!
+!
+aaa session-id common
+!
+!
+!
+ip vrf mgmt
+!
+!
+!
+!
+ip domain name admin
+ip cef
+no ipv6 cef
+!
+multilink bundle-name authenticated
+!
+!
+!
+!
+!
+!
+!
+!
+!
+username netadmin privilege 15 password 0 Passw0rd
+!
+redundancy
+!
+!
+ip ssh version 2
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+interface Loopback0
+ ip address 9.9.9.1 255.255.255.255
+!
+interface Loopback1
+ ip address 10.9.1.1 255.255.255.0
+ ip ospf network point-to-point
+!
+interface FastEthernet0/0
+ ip address 192.168.9.1 255.255.255.0
+ duplex half
+!
+interface Ethernet1/0
+ ip address 172.23.9.1 255.255.255.224
+ duplex half
+!
+interface Ethernet1/1
+ ip address 172.22.9.14 255.255.255.248
+ duplex half
+!
+interface Ethernet1/2
+ no ip address
+ shutdown
+ duplex half
+!
+interface Ethernet1/3
+ no ip address
+ shutdown
+ duplex half
+!
+interface Ethernet2/0
+ ip address 172.22.9.1 255.255.255.248
+ duplex half
+!
+interface Ethernet2/1
+ no ip address
+ shutdown
+ duplex half
+!
+interface Ethernet2/2
+ no ip address
+ shutdown
+ duplex half
+!
+interface Ethernet2/3
+ no ip address
+ shutdown
+ duplex half
+!
+router ospf 1
+ network 9.9.9.1 0.0.0.0 area 0
+ network 10.9.1.0 0.0.0.255 area 0
+ network 172.22.9.0 0.0.0.7 area 0
+ network 172.22.9.8 0.0.0.7 area 0
+ network 172.23.9.0 0.0.0.31 area 0
+ network 192.168.9.0 0.0.0.255 area 0
+!
+ip forward-protocol nd
+no ip http server
+no ip http secure-server
+!
+!
+ip tacacs source-interface Loopback0
+!
+!
+!
+tacacs server ACS-TACACS
+ address ipv4 192.168.6.12
+ key abc1234
+!
+!
+!
+control-plane
+!
+!
+!
+mgcp profile default
+!
+!
+!
+gatekeeper
+ shutdown
+!
+!
+line con 0
+ exec-timeout 0 0
+ privilege level 15
+ logging synchronous
+ login authentication CONSOLE
+ stopbits 1
+line aux 0
+ exec-timeout 0 0
+ privilege level 15
+ logging synchronous
+ stopbits 1
+line vty 0 4
+ logging synchronous
+ transport input all
+line vty 5 15
+ transport input all
+!
+!
+end
